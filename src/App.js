@@ -10,7 +10,9 @@ class App extends Component {
             room:-1,
             chosenFruit:'',
             showFruit:-1,
-            allnames:[]
+            allnames:[],
+            theFruit: '',
+            myname: 'N/A'
         };
         
         this.handleRoom1 = this.handleRoom1.bind(this);
@@ -53,10 +55,24 @@ class App extends Component {
         
         this.handleName=this.handleName.bind(this);
         this.addName=this.addName.bind(this);
+        
+        this.chooseFruit = this.chooseFruit.bind(this);
     }
     
     componentDidMount(){
         this.socket= mySocket('http://localhost:10001');
+     
+        this.socket.on('chosenFruit', (data=>{
+            this.setState({
+                theFruit:data
+            })
+        }))
+        
+        this.socket.on('theWinner', (data=>{
+            alert('The winner is '+ data + '. '+ data + 'found the ' + this.state.theFruit);
+            
+            console.log('the winner is '+ data);
+        }))
     }
     
     handleRoom1(){
@@ -109,7 +125,7 @@ class App extends Component {
     
     handleBack(){
         this.setState({
-            room:0
+            room:50
         })
     }
     
@@ -135,96 +151,95 @@ class App extends Component {
     addName(data){
         this.socket.emit('uname', this.state.myname);
         
-        this.socket.on('allnames', (data=>{
+        this.setState({
+            room:50
+        })
+        /*this.socket.on('allnames', (data=>{
             this.setState({
                 allnames:data
             })
         }))
-        
-        console.log(this.state.allnames);
+        console.log(this.state.allnames);*/
     }
     
     hostCherry(){
         this.setState({
-            chosenFruit: './imgs/cherry.png',
-            room:0
+            chosenFruit: './imgs/cherry.png'
         })
     }
     
+    chooseFruit(data){
+        this.socket.emit('chosenF', this.state.chosenFruit);
+        
+        this.setState({
+            room: 51
+        })
+    }
+    
+    
     hostStrawberry(){
         this.setState({
-            chosenFruit: './imgs/strawberry.png',
-            room:0
+            chosenFruit: './imgs/strawberry.png'
         })
     }
     
     hostLemon(){
         this.setState({
-            chosenFruit: './imgs/lemon.png',
-            room:0
+            chosenFruit: './imgs/lemon.png'
         })
     }
     
     hostBanana(){
         this.setState({
-            chosenFruit: './imgs/banana.png',
-            room:0
+            chosenFruit: './imgs/banana.png'
         })
     }
     
     hostBlueberry(){
         this.setState({
-            chosenFruit: './imgs/blueberry.png',
-            room:0
+            chosenFruit: './imgs/blueberry.png'
         })
     }
     
     hostPlum(){
         this.setState({
-            chosenFruit: './imgs/plum.png',
-            room:0
+            chosenFruit: './imgs/plum.png'
         })
     }
     
     hostOrange(){
         this.setState({
-            chosenFruit: './imgs/orange.png',
-            room:0
+            chosenFruit: './imgs/orange.png'
         })
     }
     
     hostCarrot(){
         this.setState({
-            chosenFruit: './imgs/carrot.png',
-            room:0
+            chosenFruit: './imgs/carrot.png'
         })
     }
     
     hostPeach(){
         this.setState({
-            chosenFruit: './imgs/peach.png',
-            room:0
+            chosenFruit: './imgs/peach.png'
         })
     }
     
     hostGrapefruit(){
         this.setState({
-            chosenFruit: './imgs/grapefruit.png',
-            room:0
+            chosenFruit: './imgs/grapefruit.png'
         })
     }
     
     hostApple(){
         this.setState({
-            chosenFruit: './imgs/apple.png',
-            room:0
+            chosenFruit: './imgs/apple.png'
         })
     }
     
     hostKiwi(){
         this.setState({
-            chosenFruit: './imgs/kiwi.png',
-            room:0
+            chosenFruit: './imgs/kiwi.png'
         })
     }
     
@@ -232,12 +247,14 @@ class App extends Component {
         this.setState({
             showFruit: 0
         })
+        
     }
     
     handleStrawberry(){
         this.setState({
             showFruit: 1
         })
+        
     }
     
     handleLemon(){
@@ -305,93 +322,101 @@ class App extends Component {
       
       if(this.state.room === -1){
           comp = (
-                <div className="App">
-                    <button onClick={this.handleHost}>Host</button>
-                    <button onClick={this.handlePlayer}>Player</button>
+                <div className="maze">
+                    <button class='thebut' onClick={this.handleHost}>Host</button>
+                    <button class='thebut' onClick={this.handlePlayer}>Player</button>
                 </div>
           )
       }else if(this.state.room === 0){
-          console.log(this.state.chosenFruit);
           comp = (
-                <div className="App">
-                    <input type='text' placeholder='Enter Your Name' onChange={this.handleName}/>
-                    <button onClick={this.addName}>AddName</button>
+                <div className="player">
+                    <input className='nameinput' type='text' placeholder='Enter Your Name' onChange={this.handleName}/>
+                    <button class='thebut' onClick={this.addName}>AddName</button>
               
                     {this.state.myname}
-              
-                    <button onClick={this.handleRoom1}>Room 1</button>
-                    <button onClick={this.handleRoom2}>Room 2</button>
                 </div>
           )
+      }else if(this.state.room === 50){
+          comp=(
+                <div className="rooms">
+                    <button class='thebut' onClick={this.handleRoom1}>Room 1</button>
+                    <button class='thebut' onClick={this.handleRoom2}>Room 2</button>
+                </div>
+          )
+          
       }else if (this.state.room === 1){
           comp = (
-                <div className="App">
-                    <button onClick={this.handleRed}>Red</button>
-                    <button onClick={this.handleYellow}>Yellow</button>
-                    <button onClick={this.handleBlue}>Blue</button>
-                    <button onClick={this.handleBack}>Back to Start</button>
+                <div className="ryb">
+                    <button class='thebut' onClick={this.handleRed}>Red</button>
+                    <button class='thebut' onClick={this.handleYellow}>Yellow</button>
+                    <button class='thebut' onClick={this.handleBlue}>Blue</button>
+                    <button class='thebut' onClick={this.handleBack}>Back to Start</button>
                 </div>
           )
       }else if (this.state.room === 2){
           comp = (
-                <div className="App">
-                    <button onClick={this.handleOrange}>Orange</button>
-                    <button onClick={this.handlePink}>Pink</button>
-                    <button onClick={this.handleGreen}>Green</button>
-                    <button onClick={this.handleBack}>Back to Start</button>
+                <div className="opg">
+                    <button class='thebut' onClick={this.handleOrange}>Orange</button>
+                    <button class='thebut' onClick={this.handlePink}>Pink</button>
+                    <button class='thebut' onClick={this.handleGreen}>Green</button>
+                    <button class='thebut' onClick={this.handleBack}>Back to Start</button>
                 </div>
           )
       }else if (this.state.room === 3){
           comp = (
-                <div className="App">
-                    <button onClick={this.handleCherry}>Cherry</button>
-                    <button onClick={this.handleStrawberry}>Strawberry</button>
-                    <button onClick={this.handleBack}>Back to Start</button>
+                <div className="red">
+                    <button class='thebut' onClick={this.handleCherry}>Cherry</button>
+                    <button class='thebut' onClick={this.handleStrawberry}>Strawberry</button>
+                    <button class='thebut' onClick={this.handleBack}>Back to Start</button>
                 </div>
           )
       }else if (this.state.room === 4){
           comp = (
-                <div className="App">
-                    <button onClick={this.handleLemon}>Lemon</button>
-                    <button onClick={this.handleBanana}>Banana</button>
-                    <button onClick={this.handleBack}>Back to Start</button>
+                <div className="yellow">
+                    <button class='thebut' onClick={this.handleLemon}>Lemon</button>
+                    <button class='thebut' onClick={this.handleBanana}>Banana</button>
+                    <button class='thebut' onClick={this.handleBack}>Back to Start</button>
                 </div>
           )
       }else if (this.state.room === 5){
           comp = (
-                <div className="App">
-                    <button onClick={this.handleBlueberry}>Blueberry</button>
-                    <button onClick={this.handlePlum}>Plum</button>
-                    <button onClick={this.handleBack}>Back to Start</button>
+                <div className="blue">
+                    <button class='thebut' onClick={this.handleBlueberry}>Blueberry</button>
+                    <button class='thebut' onClick={this.handlePlum}>Plum</button>
+                    <button class='thebut' onClick={this.handleBack}>Back to Start</button>
                 </div>
           )
       }else if (this.state.room === 6){
           comp = (
-                <div className="App">
-                    <button onClick={this.handleOrange}>Orange</button>
-                    <button onClick={this.handleCarrot}>Carrot</button>
-                    <button onClick={this.handleBack}>Back to Start</button>
+                <div className="orange">
+                    <button class='thebut' onClick={this.handleOrange}>Orange</button>
+                    <button class='thebut' onClick={this.handleCarrot}>Carrot</button>
+                    <button class='thebut' onClick={this.handleBack}>Back to Start</button>
                 </div>
           )
       }else if (this.state.room === 7){
           comp = (
-                <div className="App">
-                    <button onClick={this.handlePeach}>Peach</button>
-                    <button onClick={this.handleGrapefruit}>Grapefruit</button>
-                    <button onClick={this.handleBack}>Back to Start</button>
+                <div className="pink">
+                    <button class='thebut' onClick={this.handlePeach}>Peach</button>
+                    <button class='thebut' onClick={this.handleGrapefruit}>Grapefruit</button>
+                    <button class='thebut' onClick={this.handleBack}>Back to Start</button>
                 </div>
           )
       }else if (this.state.room === 8){
           comp = (
-                <div className="App">
-                    <button onClick={this.handleApple}>Apple</button>
-                    <button onClick={this.handleKiwi}>Kiwi</button>
-                    <button onClick={this.handleBack}>Back to Start</button>
+                <div className="green">
+                    <button class='thebut' onClick={this.handleApple}>Apple</button>
+                    <button class='thebut' onClick={this.handleKiwi}>Kiwi</button>
+                    <button class='thebut' onClick={this.handleBack}>Back to Start</button>
                 </div>
           )
       }else if (this.state.room === 9){
           comp = (
-                <div className="App">
+                <div className="host">
+                    <button class='thebut' onClick={this.chooseFruit}>Choose Fruit</button>
+                    
+                    <br/>
+                    <br/>
               
                     <img alt='fruitimg' className='hostImg' src={require('./imgs/cherry.png')} onClick={this.hostCherry}/>
               
@@ -419,91 +444,105 @@ class App extends Component {
             
                 </div>
           )
+      }else if(this.state.room === 51){
+          comp = (
+                <div className="App">
+                    <div>
+                        <p>You chose to hide the {this.state.theFruit} in the game.</p>
+              
+                        <p> Lets see who wins! </p>
+              
+                </div>
+                </div>
+          )
       }
       
-    if(this.state.chosenFruit === './imgs/cherry.png'){
+    if(this.state.theFruit === './imgs/cherry.png'){
         if(this.state.showFruit === 0){
-            console.log('yes');
             comp=(
                 <img alt='fruitimg' className='hostImg' src={require('./imgs/cherry.png')}/>
             )
+            
+            this.socket.emit('theWin', this.state.myname);
         }
-    }else if(this.state.chosenFruit === './imgs/strawberry.png'){
+    }else if(this.state.theFruit === './imgs/strawberry.png'){
         if(this.state.showFruit === 1){
-            console.log('yes');
             comp=(
                 <img alt='fruitimg' className='hostImg' src={require('./imgs/strawberry.png')}/>
             )
+            
+            this.socket.emit('theWin', this.state.myname);
         }
-    }else if(this.state.chosenFruit === './imgs/lemon.png'){
+    }else if(this.state.theFruit === './imgs/lemon.png'){
         if(this.state.showFruit === 2){
-            console.log('yes');
             comp=(
                 <img alt='fruitimg' className='hostImg' src={require('./imgs/lemon.png')}/>
             )
+            
+            this.socket.emit('theWin', this.state.myname);
         }
-    }else if(this.state.chosenFruit === './imgs/banana.png'){
+    }else if(this.state.theFruit === './imgs/banana.png'){
         if(this.state.showFruit === 3){
-            console.log('yes');
             comp=(
                 <img alt='fruitimg' className='hostImg' src={require('./imgs/banana.png')}/>
             )
+            this.socket.emit('theWin', this.state.myname);
         }
-    }else if(this.state.chosenFruit === './imgs/blueberry.png'){
+    }else if(this.state.theFruit === './imgs/blueberry.png'){
         if(this.state.showFruit === 4){
-            console.log('yes');
             comp=(
                 <img alt='fruitimg' className='hostImg' src={require('./imgs/blueberry.png')}/>
             )
+            this.socket.emit('theWin', this.state.myname);
         }
-    }else if(this.state.chosenFruit === './imgs/plum.png'){
+    }else if(this.state.theFruit === './imgs/plum.png'){
         if(this.state.showFruit === 5){
-            console.log('yes');
             comp=(
                 <img alt='fruitimg' className='hostImg' src={require('./imgs/plum.png')}/>
             )
+            this.socket.emit('theWin', this.state.myname);
         }
-    }else if(this.state.chosenFruit === './imgs/orange.png'){
+    }else if(this.state.theFruit === './imgs/orange.png'){
         if(this.state.showFruit === 6){
-            console.log('yes');
             comp=(
                 <img alt='fruitimg' className='hostImg' src={require('./imgs/orange.png')}/>
             )
+            this.socket.emit('theWin', this.state.myname);
         }
-    }else if(this.state.chosenFruit === './imgs/carrot.png'){
+    }else if(this.state.theFruit === './imgs/carrot.png'){
         if(this.state.showFruit === 7){
-            console.log('yes');
             comp=(
                 <img alt='fruitimg' className='hostImg' src={require('./imgs/carrot.png')}/>
             )
+            this.socket.emit('theWin', this.state.myname);
         }
-    }else if(this.state.chosenFruit === './imgs/peach.png'){
+    }else if(this.state.theFruit === './imgs/peach.png'){
         if(this.state.showFruit === 8){
-            console.log('yes');
             comp=(
                 <img alt='fruitimg' className='hostImg' src={require('./imgs/peach.png')}/>
             )
+            this.socket.emit('theWin', this.state.myname);
         }
-    }else if(this.state.chosenFruit === './imgs/grapefruit.png'){
+    }else if(this.state.theFruit === './imgs/grapefruit.png'){
         if(this.state.showFruit === 9){
-            console.log('yes');
             comp=(
                 <img alt='fruitimg' className='hostImg' src={require('./imgs/grapefruit.png')}/>
             )
+            this.socket.emit('theWin', this.state.myname);
         }
-    }else if(this.state.chosenFruit === './imgs/apple.png'){
+    }else if(this.state.theFruit === './imgs/apple.png'){
         if(this.state.showFruit === 10){
-            console.log('yes');
             comp=(
                 <img alt='fruitimg' className='hostImg' src={require('./imgs/apple.png')}/>
             )
+            this.socket.emit('theWin', this.state.myname);
         }
-    }else if(this.state.chosenFruit === './imgs/kiwi.png'){
+    }else if(this.state.theFruit === './imgs/kiwi.png'){
         if(this.state.showFruit === 11){
-            console.log('yes');
             comp=(
                 <img alt='fruitimg' className='hostImg' src={require('./imgs/kiwi.png')}/>
             )
+            this.socket.emit('theWin', this.state.myname);
         }
     }
 
